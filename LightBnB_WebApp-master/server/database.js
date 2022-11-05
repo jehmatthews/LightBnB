@@ -26,7 +26,6 @@ const getUserWithEmail = function(email) {
     `, [email])
     .then(res => {
       if (res.rows.length) {
-        console.log(res.rows[0]);
         return res.rows[0];
       } else {
         return null;
@@ -53,7 +52,6 @@ const getUserWithId = function(id) {
     `, [id])
     .then (res => {
       if (res.rows.length) {
-        console.log(res.rows[0]);
         return res.rows[0];
       } else {
         return null;
@@ -86,7 +84,6 @@ const addUser =  function(user) {
     .query(queryString, values)
     .then(res => {
       if (res.rows.length) {
-        console.log(res.rows[0]);
         return res.rows[0];
       } else {
         return null;
@@ -124,7 +121,6 @@ const getAllReservations = function(guest_id, limit = 10) {
   return pool
     .query(queryString, values)
     .then(res => {
-      console.log(res);
       return res.rows;
     })
     .catch(err => {
