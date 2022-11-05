@@ -16,6 +16,8 @@ pool.query(`SELECT title FROM properties LIMIT 10;`);
  * @param {String} email The email of the user.
  * @return {Promise<{}>} A promise to the user.
  */
+
+// gets user by users email
 const getUserWithEmail = function(email) {
   return pool
     .query(`
@@ -24,10 +26,14 @@ const getUserWithEmail = function(email) {
     `, [email])
     .then(res => {
       if (res.rows.length) {
+        console.log(res.rows[0]);
         return res.rows[0];
       } else {
         return null;
       }
+    })
+    .catch(err => {
+      console.log('error', err);
     });
 }
 exports.getUserWithEmail = getUserWithEmail;
@@ -37,6 +43,8 @@ exports.getUserWithEmail = getUserWithEmail;
  * @param {string} id The id of the user.
  * @return {Promise<{}>} A promise to the user.
  */
+
+// gets user by users id
 const getUserWithId = function(id) {
   return pool
     .query(`
@@ -45,10 +53,14 @@ const getUserWithId = function(id) {
     `, [id])
     .then (res => {
       if (res.rows.length) {
+        console.log(res.rows[0]);
         return res.rows[0];
       } else {
         return null;
       }
+    })
+    .catch(err => {
+      console.log('error', err);
     });
 }
 exports.getUserWithId = getUserWithId;
@@ -59,6 +71,8 @@ exports.getUserWithId = getUserWithId;
  * @param {{name: string, password: string, email: string}} user
  * @return {Promise<{}>} A promise to the user.
  */
+
+// registers a new user
 const addUser =  function(user) {
   const queryString = `
   INSERT INTO users (name, email, password)
@@ -72,10 +86,14 @@ const addUser =  function(user) {
     .query(queryString, values)
     .then(res => {
       if (res.rows.length) {
+        console.log(res.rows[0]);
         return res.rows[0];
       } else {
         return null;
       }
+    })
+    .catch(err => {
+      console.log('error', err);
     });
 }
 exports.addUser = addUser;
@@ -87,6 +105,8 @@ exports.addUser = addUser;
  * @param {string} guest_id The id of the user.
  * @return {Promise<[{}]>} A promise to the reservations.
  */
+
+// displays all reservations
 const getAllReservations = function(guest_id, limit = 10) {
   const queryString = `
   SELECT properties.*, reservations.*, avg(rating) as average_rating
@@ -103,7 +123,13 @@ const getAllReservations = function(guest_id, limit = 10) {
   
   return pool
     .query(queryString, values)
-    .then(res => res.rows);
+    .then(res => {
+      console.log(res);
+      return res.rows;
+    })
+    .catch(err => {
+      console.log('error', err);
+    });
 }
 exports.getAllReservations = getAllReservations;
 
@@ -123,7 +149,7 @@ const getAllProperties = function(options, limit = 10) {
   FROM properties
   JOIN property_reviews ON properties.id = property_id
   `;
-
+  // filtering based on what is input in search parameters
   if (options.city) {
     queryParams.push(`%${options.city}%`);
     queryString += `WHERE city LIKE $${queryParams.length}`;
@@ -143,7 +169,7 @@ const getAllProperties = function(options, limit = 10) {
 
   queryString += `
     GROUP BY properties.id`
-    
+
   if (options.minimum_rating) {
     queryParams.push(`${options.minimum_rating}`);
     queryString += `HAVING avg(property_reviews.rating) >= $${queryParams.length} `;
@@ -157,7 +183,14 @@ const getAllProperties = function(options, limit = 10) {
 
   console.log(queryString, queryParams);
 
-  return pool.query(queryString, queryParams).then((res) => res.rows);
+  return pool
+    .query(queryString, queryParams)
+    .then(res => {
+      return res.rows
+    })
+    .catch(err => {
+      console.log('error', err);
+    });
 
 };
 exports.getAllProperties = getAllProperties;
@@ -167,6 +200,8 @@ exports.getAllProperties = getAllProperties;
  * @param {{}} property An object containing all of the property details.
  * @return {Promise<{}>} A promise to the property.
  */
+
+// adding a property to a user profile
 const addProperty = function(property) {
   const queryString = `
   INSERT INTO properties (owner_id, title, description, thumbnail_photo_url, cover_photo_url, cost_per_night, street, city, provine, post_code, country, parking_spaces, number_of_bathrooms, number_of_bedrooms) 
@@ -184,6 +219,9 @@ const addProperty = function(property) {
       } else {
         return null;
       }
+    })
+    .catch(err => {
+      console.log('error', err);
     });
 }
 exports.addProperty = addProperty;
